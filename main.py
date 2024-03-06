@@ -4,6 +4,7 @@ from openpyxl.styles import Font
 import tkinter as tk
 from tkinter import ttk
 from tkinter import filedialog as fd
+import os
 from tkinter.messagebox import showinfo
 
 # create the root window
@@ -11,7 +12,11 @@ root = tk.Tk()
 root.title('Data Transform.exe')
 root.resizable(False, False)
 root.geometry('380x100')
-root.iconbitmap('D:/Onedrive/OneDrive - Chinese Shining Missionary Association/02.Personal/02.Computer Related/05.Python/measure calculator/pythonProject/icon.ico')
+try:  # avoid logo miscatch
+    root.iconbitmap('logo.ico')  
+except Exception as e:
+    pass
+
 
 # Label
 lb_choosefile = ttk.Label(text='Choose file:', background = 'grey', foreground = 'white')
