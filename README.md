@@ -1,4 +1,4 @@
-# LK-Navigator2-data-transform
+# LK-Navigator2- measure data transformation
 - Calculate measure time though measure data number and measure time range. <br>
 - Easily to make chart by using Origin or excel.
 ## Instructions
