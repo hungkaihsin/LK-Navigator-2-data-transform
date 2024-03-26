@@ -1,6 +1,6 @@
 # LK-Navigator2-data-transform
-Calculate measure time though measure data number and measure time range. <br>
-Easily to make chart by using Origin or excel.
+- Calculate measure time though measure data number and measure time range. <br>
+- Easily to make chart by using Origin or excel.
 ## Instructions
 1. Open main.exe.
 2. Choose LK Navigator2 measure file(.xlsx).
