@@ -1,7 +1,6 @@
 # LK-Navigator2 visualisation tool
 ### - Introduction
-- Calculate measure time though measure data number and measure time range. <br>
-- Easily to make chart by using Origin or excel.
+- Calculate the time range of measure data and transfer it to chart
 ### - Instructions
 #### 1. Installation
 
