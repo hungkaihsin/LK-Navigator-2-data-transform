@@ -1,47 +1,67 @@
-import tkinter
+import openpyxl.workbook
+import pandas as pd
 import openpyxl
 from openpyxl.styles import Font
+from openpyxl.styles.alignment import Alignment
+import matplotlib.pyplot as plt 
 import tkinter as tk
 from tkinter import ttk
 from tkinter import filedialog as fd
-import os
+from tkinter import colorchooser as cc
 from tkinter.messagebox import showinfo
+import os
 
-# create the root window
+# Main root
 root = tk.Tk()
-root.title('Data Transform.exe')
+root.title("Visualisation")
 root.resizable(False, False)
-root.geometry('380x100')
-try:  # avoid logo miscatch
-    root.iconbitmap('logo.ico')  
-except Exception as e:
-    pass
+root.geometry("400x200")
+root.iconbitmap("logo.ico")
 
 
 # Label
-lb_choosefile = ttk.Label(text='Choose file:', background = 'grey', foreground = 'white')
-lb_choosefile.place(x = 0, y = 0)
-lb_measuredata = ttk.Label(text = 'Measure data:', background = 'grey', foreground = 'white')
-lb_measuredata.place(x = 0, y = 35)
-lb_time = ttk.Label(text='Measure time:', background= 'grey', foreground= 'white')
-lb_time.place(x = 200, y = 35)
+lb_choose_file = ttk.Label(text = "Choose file:")
+lb_choose_file.place(x= 0, y = 3)
+lb_measuredata = ttk.Label(text = "Measure data:")
+lb_measuredata.place(x = 0, y = 37)
+lb_measuredata_remind = ttk.Label(text = "(depend on amount data)")
+lb_measuredata_remind.place(x=200, y = 37 )
+lb_time = ttk.Label(text="Measure time:")
+lb_time.place(x = 0, y = 77)
+lb_time_remind = ttk.Label(text = "(s)")
+lb_time_remind.place(x = 200, y= 77)
+lb_color_choosen = tk.Label(height=1, width=2, bg= "green")
+lb_color_choosen.place(x=195, y= 111)
+
+
+
 
 # Entry
-en_loadFile = ttk.Entry(width= 35)
-en_loadFile.place(x = 85, y = 0)
+en_choose_file = ttk.Entry(width= 25)
+en_choose_file.place(x = 85, y = 0)
 en_measuredate = ttk.Entry(width= 8)
 en_measuredate.place(x = 100, y = 35)
 en_time = ttk.Entry(width= 8)
-en_time.place(x= 300, y = 35)
-en_filepath = ttk.Entry(width = 18)
-en_filepath.place(x = 100, y = 73)
+en_time.place(x= 100, y = 75)
+
 
 # Function
+
+# Color chooser
+def colorchoose():
+    color = cc.askcolor()
+    color = color[1]
+    print(str(color))
+    lb_color_choosen.config(bg= color)
+
+
+# Load File
+
 def load_file():
     filetypes = (
-        ('Excel files', '*.xlsx'),('All files', '*.*')
+        ('csv file', '*.csv'),('All files', '*.*')
     )
-    if en_loadFile.get() is None:
+    if en_choose_file.get() is None:
         filepath = fd.askopenfilename(
         title = 'Open a file',
         initialdir = '/',
@@ -51,76 +71,65 @@ def load_file():
         title = 'Open a file',
         initialdir = '/',
         filetypes = filetypes)
-        en_loadFile.delete(0,'end')
-        en_loadFile.insert(0, filepath)
+        en_choose_file.delete(0,'end')
+        en_choose_file.insert(0, filepath)
 
-def Saveloacation():
-    if en_filepath.get() is None:
-        folderselect = fd.askdirectory()
-        showinfo(title = 'Save', message = 'location saved')
-    else:
-        folderselect = fd.askdirectory()
-        en_filepath.delete(0,'end')
-        en_filepath.insert(0, folderselect)
+# Calculate and transform
 
-def output():
-    if len(en_loadFile.get()) == 0:
+
+def transit():
+    if len(en_choose_file.get()) == 0:
         showinfo(title = 'Wrong', message = 'Please choose file')
     elif len(en_measuredate.get()) == 0:
         showinfo(title = 'Wrong', message = 'Please type data')
     elif len(en_time.get()) == 0:
         showinfo(title = 'Wrong', message = 'Please type time')
-    elif len(en_filepath.get()) == 0:
-        showinfo(title = 'Wrong', message = 'Please chose save location')
     else:
-        file_route = en_loadFile.get()
-        measuredata = en_measuredate.get()
-        measuredata = int(measuredata)
-        measuretime = en_time.get()
-        measuretime = int(measuretime)
-        time_period = float(measuretime / measuredata)
-        wb_open = openpyxl.load_workbook(file_route)
+        file_route = en_choose_file.get()
+        measure_data = en_measuredate.get()
+        measure_data = int(measure_data)
+        measure_time = en_time.get()
+        measure_time = int(measure_time)
+        transition = float(measure_time / measure_data)
+
+        load_csv_file = pd.read_csv(file_route, index_col= False, names=["Category", "Time","Distance"])
+        load_csv_file.to_excel("Result.xlsx", index=False)
+        wb_open = openpyxl.load_workbook("Result.xlsx")
         sheet = wb_open.worksheets[0]
 
-    for transit in range(1, measuredata, 1):
-        result = transit
-        outcome = result * time_period
-        sheet.cell(transit,4).value = outcome
-    sheet.cell(1,2).value = "Data"
-    sheet.cell(1,2).font = Font(bold = True)
-    sheet.cell(1,5).value = "Time"
-    sheet.cell(1,5).font = Font(bold = True)
-    filesavepath = en_filepath.get()
-    destination = filesavepath + "/Result.xlsx"
-    wb_open.save(destination)
-    showinfo(
-        title = "Transform",
-        message = "Done!",
-    )
+        for transit in range(1, measure_data, 1):
+            result = transit 
+            outcome = result * transition
+            sheet.cell((transit +1 ),2).value = outcome
 
+        wb_open.save("Result.xlsx")
+        excel_plot = pd.read_excel("Result.xlsx")
+        x_axis = excel_plot["Time"]
+        y_axis = excel_plot["Distance"]
+        
+        plt.plot(x_axis, y_axis, color = lb_color_choosen["bg"])
+        plt.xlabel("Time(s)", fontsize = "12")
+        plt.ylabel("Distance(mm)", fontsize = "12")
+        plt.title("Actuator", fontsize = "15")
+        plt.ylim(-7,2)
+        plt.show()
+        
+        os.remove("Result.xlsx")
 
+     
 
 # Button
-btn_loadfile = ttk.Button(text = '...',command = load_file, width = 4)
-btn_loadfile.place(x = 340, y = 0)
-btn_output = ttk.Button(text = 'Output', command = output)
-btn_output.place(x = 250, y = 70)
-btn_savelocation = ttk.Button(text = 'Save location', command = Saveloacation)
-btn_savelocation.place(x = 0, y = 70)
+btn_loadfile = ttk.Button(text = '...', command= load_file, width = 4)
+btn_loadfile.place(x = 330, y = 0, width= 50)
+btn_transit = ttk.Button(text = "Transit", command= transit)
+btn_transit.place(x = 150, y = 170)
+btn_choose_color = ttk.Button(text="Choose plot's line color", command= colorchoose)
+btn_choose_color.place(x=0,y= 109)
 
 
-# continue exist
+
+
 root.mainloop()
 
 
-
-
-'''
-# create new Excel file, chose worksheet and save it
-
-fn = 'Outcome.xlsx'
-wb = openpyxl.Workbook()
-sheet = wb.worksheets[0]
-
-'''
 
