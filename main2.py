@@ -1,3 +1,4 @@
+import openpyxl.workbook
 import pandas as pd
 import openpyxl
 from openpyxl.styles import Font
@@ -8,6 +9,7 @@ from tkinter import ttk
 from tkinter import filedialog as fd
 from tkinter import colorchooser as cc
 from tkinter.messagebox import showinfo
+import os
 
 # Main root
 root = tk.Tk()
@@ -84,32 +86,20 @@ def transit():
         measure_time = int(measure_time)
         transition = float(measure_time / measure_data)
 
-        load_csv_file = pd.read_csv(file_route, usecols=[2])
-        header_list = ["Distance"]
-        load_csv_file.to_excel("123456.xlsx", header= header_list, index= False)
-
-
-        wb_open = openpyxl.load_workbook("123456.xlsx")
+        load_csv_file = pd.read_csv(file_route, index_col= False, names=["Category", "Time","Distance"])
+        load_csv_file.to_excel("Result.xlsx", index=False)
+        wb_open = openpyxl.load_workbook("Result.xlsx")
         sheet = wb_open.worksheets[0]
+
         for transit in range(1, measure_data, 1):
-            count = transit
-            outcome=  count * transition
-            sheet.cell((transit + 1),2).value = outcome
+            result = transit 
+            outcome = result * transition
+            sheet.cell((transit +1 ),2).value = outcome
 
-        
-        sheet.cell(1,2).value = "Time"
-        sheet.cell(1,2).font = Font(bold = True)
-        sheet["B1"].alignment = Alignment(horizontal= "center")
-        wb_open.save("123456.xlsx")
-        showinfo(
-        title = "Transform",
-        message = "Done!",
-    )
-
-
-        read_excel = pd.read_excel("123456.xlsx")
-        x_axis = read_excel["Time"]
-        y_axis = read_excel["Distance"]
+        wb_open.save("Result.xlsx")
+        excel_plot = pd.read_excel("Result.xlsx")
+        x_axis = excel_plot["Time"]
+        y_axis = excel_plot["Distance"]
         
         plt.plot(x_axis, y_axis, color = "#000000")
         plt.xlabel("Time(s)", fontsize = "12")
@@ -117,6 +107,10 @@ def transit():
         plt.title("Actuator", fontsize = "15")
         plt.ylim(-7,2)
         plt.show()
+        
+        os.remove("Result.xlsx")
+
+     
 
 
 
