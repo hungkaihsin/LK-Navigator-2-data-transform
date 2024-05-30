@@ -24,13 +24,13 @@
 ### 3. Demonstrate
 <p align = "center">
 
-<img src="https://imgur.com/z7LD6Ak.png" alt="Demontrate" width="450"/>
+<img src="https://imgur.com/wmbvMQY.png" alt="Demontrate" width="450"/>
  </p>   
 
 
 <p align = "center">
 
-<img src="https://imgur.com/G3VX5Rt.png" alt="Demontrate" width="450"/>
+<img src="https://imgur.com/G0GImIl.png" alt="Demontrate" width="450"/>
  </p>   
 
 #### Note
